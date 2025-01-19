@@ -2,6 +2,10 @@
 
 ## Description
 
+This was written as an exercise during a job interview, there were obviously constraints of time and no external resources were used.
+
+There is room for improvement that much is obvious but it's a good start
+
 The **Martti Suosalo Game** is a simple C++ game based on a set of rules involving players calling out numbers, while adhering to special rules involving the number 7. Players take turns calling out numbers, but when certain conditions are met (such as divisibility by 7, the number containing a 7, or the sum of digits being 7), the player says "Martti Suosalo" instead of the number. The game also involves reversing the direction of play when a number with the same digits is called.
 
 ### Game Rules:
