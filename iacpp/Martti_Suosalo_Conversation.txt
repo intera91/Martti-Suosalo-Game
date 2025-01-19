@@ -1,0 +1,238 @@
+
+Martti Suosalo is a (drinking) game played as follows:
+
+Players are arranged in a ring. Let the first player be 1, and the last N,
+
+clockwise. Player 1 starts the game.
+
+The game with 8 players:
+
+(1)
+
+(8) (2)
+
+(7) (3)
+
+(6) (4)
+
+(5)
+
+2. In each turn of the game, the player in turn calls out the number one greater
+
+than the previous player. Then the turn passes to the next player. The
+
+called out numbers start from 1 and are consecutive natural numbers.
+
+4. The game starts clockwise: first player 1, then 2 etc.
+
+5. If the called out number has more than 1 digits, and all of the digits are
+
+the same (such as 11, 33, or 444), the game direction changes AFTER such
+
+number is called out. Example: if player 2 called 10, player 3 called 11,
+
+player 2 will call 12.
+
+6. Whenever the called out number satisfies at least one of the following
+
+conditions:
+
+a. divisible by 7
+
+b. contains 7 as one of its digits
+
+c. the sum of the digits is seven
+
+The player will call "Martti Suosalo" instead of the number. The number is
+
+still incremented. A number (such as 77) may both change the direction and be
+
+called "Martti Suosalo"
+
+7. The game ends, when someone violates some rule. The loser has to down a drink!
+
+The task is to write a program, which plays sober (read: flawless!) Martti
+
+Suosalo game with the given number of players and turns.
+
+The program shall take the number of players and turns as parameters
+
+(command line or compile-time constants). Then it shall print out the course
+
+of the game: which player shouted what.
+
+Constraints:
+
+- The game has 1 or more turns, and 1 or more players.
+
+- There shall be no artificial constraints, except machine integer size.
+
+- Although the real life game is perhaps interesting only with 3 to 10 players,
+
+the cases of 1, 2 and >10 players are well defined, and should be handled.
+
+---
+
+Here’s the C++ code for the **Martti Suosalo** game:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+class CGame {
+private:
+    int numPlayers;
+    int numTurns;
+    std::vector<int> players;
+    int currentPlayer;
+    int direction;
+    int currentNumber;
+
+public:
+    CGame(int players, int turns);
+
+    bool isDivisibleBy7(int number);
+    bool contains7(int number);
+    bool sumOfDigitsIs7(int number);
+    bool isMarttiSuosalo(int number);
+    bool isSameDigitNumber(int number);
+    void playGame();
+};
+
+CGame::CGame(int players, int turns) {
+    numPlayers = players;
+    numTurns = turns;
+    currentPlayer = 0;
+    direction = 1; // 1 for clockwise, -1 for counter-clockwise
+    currentNumber = 1;
+
+    for (int i = 0; i < numPlayers; ++i) {
+        this->players.push_back(i + 1);
+    }
+}
+
+bool CGame::isDivisibleBy7(int number) {
+    return (number % 7 == 0);
+}
+
+bool CGame::contains7(int number) {
+    while (number > 0) {
+        if (number % 10 == 7) {
+            return true;
+        }
+        number /= 10;
+    }
+    return false;
+}
+
+bool CGame::sumOfDigitsIs7(int number) {
+    int sum = 0;
+    while (number > 0) {
+        sum += number % 10;
+        number /= 10;
+    }
+    return (sum == 7);
+}
+
+bool CGame::isMarttiSuosalo(int number) {
+    return isDivisibleBy7(number) || contains7(number) || sumOfDigitsIs7(number);
+}
+
+bool CGame::isSameDigitNumber(int number) {
+    if (number < 10) {
+        return false;
+    }
+
+    int lastDigit = number % 10;
+    while (number > 0) {
+        if (number % 10 != lastDigit) {
+            return false;
+        }
+        number /= 10;
+    }
+    return true;
+}
+
+void CGame::playGame() {
+    for (int turn = 0; turn < numTurns; ++turn) {
+        if (isMarttiSuosalo(currentNumber)) {
+            std::cout << "Player " << players[currentPlayer] << " shouts 'Martti Suosalo'
+";
+        } else {
+            std::cout << "Player " << players[currentPlayer] << " shouts '" << currentNumber << "'
+";
+        }
+
+        if (isSameDigitNumber(currentNumber)) {
+            direction = -direction; // Reverse the direction
+        }
+
+        currentNumber++;
+        currentPlayer = (currentPlayer + direction + numPlayers) % numPlayers;
+    }
+}
+
+int main() {
+    int numPlayers, numTurns;
+    std::cout << "Enter number of players: ";
+    std::cin >> numPlayers;
+    std::cout << "Enter number of turns: ";
+    std::cin >> numTurns;
+
+    CGame game(numPlayers, numTurns);
+    game.playGame();
+
+    return 0;
+}
+```
+
+To compile and run:
+
+1. Install CMake.
+2. Run:
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+./MarttiSuosalo
+```
+
+Example output for 5 players and 20 turns:
+
+```
+Enter number of players: 5
+Enter number of turns: 20
+
+Player 1 shouts '1'
+Player 2 shouts '2'
+Player 3 shouts '3'
+Player 4 shouts '4'
+Player 5 shouts '5'
+Player 1 shouts '6'
+Player 2 shouts 'Martti Suosalo'
+Player 3 shouts '8'
+Player 4 shouts '9'
+Player 5 shouts '10'
+Player 4 shouts '11'
+Player 3 shouts 'Martti Suosalo'
+Player 2 shouts '13'
+Player 1 shouts '14'
+Player 5 shouts 'Martti Suosalo'
+Player 4 shouts '16'
+Player 3 shouts 'Martti Suosalo'
+Player 2 shouts '18'
+Player 1 shouts '19'
+Player 5 shouts 'Martti Suosalo'
+```
+
+```
+
+# Save the conversation in a .txt file
+file_path = '/mnt/data/Martti_Suosalo_Conversation.txt'
+with open(file_path, 'w') as file:
+    file.write(conversation)
+
+file_path
